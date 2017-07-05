@@ -1,5 +1,5 @@
 var socket = io();
-
+var user;
 	function scrollToBottom(){
 		var messages = jQuery('#messages');
 		var newMessage = messages.children('li:last-child')
@@ -17,7 +17,7 @@ var socket = io();
 
 	socket.on('connect', function () {
 		var params = jQuery.deparam(window.location.search);
-
+		user = params;
 		socket.emit('join', params, function(err){
 			if(err){
 				alert(err);
@@ -72,7 +72,7 @@ var socket = io();
 		e.preventDefault();
 		var messageTextbox = jQuery('[name=message]');
 		socket.emit('createMessage',{
-			from:'User',
+			from: user.name,
 			text: messageTextbox.val()
 		}, function(data){
 			messageTextbox.val('')
