@@ -15,9 +15,30 @@ var user;
 		}
 	}
 
+	function requestNotificationPermission(){
+		if (Notification.permission !== "granted")
+    		Notification.requestPermission();
+	}
+
+	function generateNotification(from,message){
+		var notification = new Notification(from, {
+      			icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
+      			body: message
+    		});
+
+    		notification.onclick = function () {
+      		// window.open("http://stackoverflow.com/a/13328397/1269037");      
+    		};
+	}
+
 	socket.on('connect', function () {
 		var params = jQuery.deparam(window.location.search);
 		user = params;
+		if (!Notification) {
+   				 alert('Desktop notifications not available in your browser. Try Chromium.'); 
+    			return;
+  			}
+		requestNotificationPermission();
 		socket.emit('join', params, function(err){
 			if(err){
 				alert(err);
@@ -50,7 +71,13 @@ var user;
 			from: message.from,
 			createdAt: formattedTime
 		});
-
+		if (Notification.permission !== "granted")
+   			 requestNotificationPermission();
+  		else {
+  			if (message.notification) {
+  				generateNotification(message.from,message.text);
+  			}
+  		}
 		jQuery('#messages').append(html);
 		scrollToBottom();
 	});

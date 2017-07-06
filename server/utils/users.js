@@ -25,6 +25,25 @@ class Users {
 
     return namesArray;
   }
+  getRoomList(){
+  	var roomNameArray = this.users.map((user) => user.room);
+  	var filteredArray=[];
+
+	for (var i = roomNameArray.length - 1; i >= 0; i--) {
+		var add = true;
+		for (var j = filteredArray.length - 1; j >= 0; j--) {
+			if(roomNameArray[i] === filteredArray[j]){
+				add = false;
+				break;
+			}
+		}
+		if(add){
+			filteredArray.push(roomNameArray[i]);
+		}
+	}
+
+  	return filteredArray;
+  }
 }
 
 module.exports = {Users};
