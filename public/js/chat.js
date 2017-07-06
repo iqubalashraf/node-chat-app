@@ -22,7 +22,7 @@ var user;
 
 	function generateNotification(from,message){
 		var notification = new Notification(from, {
-      			icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
+      			icon: 'https://cdn0.iconfinder.com/data/icons/Android-R2-png/512/Messages-Android-R.png',
       			body: message
     		});
 
@@ -74,7 +74,11 @@ var user;
 		if (Notification.permission !== "granted")
    			 requestNotificationPermission();
   		else {
-  			if (message.notification) {
+  			var notification = true;
+  			if (!document.hidden) {
+				notification = false;
+			}
+  			if (message.notification && notification) {
   				generateNotification(message.from,message.text);
   			}
   		}
