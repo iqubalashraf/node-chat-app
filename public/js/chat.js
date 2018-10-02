@@ -1,4 +1,5 @@
 var socket = io();
+// const notifier = require('node-notifier');
 var user;
 	function scrollToBottom(){
 		var messages = jQuery('#messages');
@@ -71,17 +72,6 @@ var user;
 			from: message.from,
 			createdAt: formattedTime
 		});
-		if (Notification.permission !== "granted")
-   			 requestNotificationPermission();
-  		else {
-  			var notification = true;
-  			if (!document.hidden) {
-				notification = false;
-			}
-  			if (message.notification && notification) {
-  				generateNotification(message.from,message.text);
-  			}
-  		}
 		jQuery('#messages').append(html);
 		scrollToBottom();
 	});
@@ -103,6 +93,13 @@ var user;
 		e.preventDefault();
 		var messageTextbox = jQuery('[name=message]');
 		socket.emit('createMessage',{
+			from: user.name,
+			text: messageTextbox.val()
+		}, function(data){
+			//messageTextbox.val('')
+		});
+
+		socket.emit('createMessageSelf',{
 			from: user.name,
 			text: messageTextbox.val()
 		}, function(data){

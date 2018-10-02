@@ -12,6 +12,7 @@ var app = express();
 var server = http.createServer(app);
 var io = socketIO(server);
 var users = new Users();
+const notifier = require('node-notifier');
 
 app.use(express.static(publicPath));
 
@@ -39,8 +40,24 @@ io.on('connection', (socket) =>{
 	socket.on('createMessage', (message , callback) =>{
 		var user = users.getUser(socket.id);
 		if(user && isRealString(message.text)){
-			socket.emit('newMessage', generateMessage(message.from, message.text,false));
+			//socket.emit('newMessage', generateMessage(message.from, message.text,false));
+			
 			socket.broadcast.to(user.room).emit('newMessage', generateMessage(message.from, message.text,true));
+			// io.to(user.room).emit('newMessage', generateMessage(message.from, message.text,message.notification));
+		}
+
+		callback();
+	});
+
+	socket.on('createMessageSelf', (message , callback) =>{
+		var user = users.getUser(socket.id);
+		if(user && isRealString(message.text)){
+			notifier.notify({
+  				title: message.from,
+  				message: message.text
+			});
+			socket.emit('newMessage', generateMessage(message.from, message.text,false));
+			//socket.broadcast.to(user.room).emit('newMessage', generateMessage(message.from, message.text,true));
 			// io.to(user.room).emit('newMessage', generateMessage(message.from, message.text,message.notification));
 		}
 
